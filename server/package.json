@@ -4,6 +4,14 @@
   "main": "index.ts",
   "scripts": {
     "dev": "ts-node-dev src/server.ts",
+    "build": "tsc",
+    "start:prod": "node dist/server.js",
+    "start:dev": "ts-node-dev --respawn src/server.ts",
+    "start:prod:docker": "docker run -p 3000:3000 cat_agenda",
+    "start:dev:docker": "docker run -p 3000:3000 -v $(pwd):/app cat_agenda",
+    "docker:build": "docker build -t cat_agenda .",
+    "docker:run": "docker run -p 3000:3000 cat_agenda",
+    "docker:stop": "docker stop $(docker ps -q --filter ancestor=cat_agenda)",
     "start": "ts-node src/server.ts"
   },
   "keywords": [],
