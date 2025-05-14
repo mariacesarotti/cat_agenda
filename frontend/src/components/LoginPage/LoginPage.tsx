@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.scss";
+
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -25,12 +26,8 @@ export const LoginPage = () => {
       }
 
       const data = await response.json();
-
-      // Salvar token e userId no localStorage
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user.id.toString());
-
-      // Redirecionar para Home
       navigate("/admin");
     } catch (error: any) {
       console.error("Erro no login:", error);
@@ -40,24 +37,24 @@ export const LoginPage = () => {
 
   return (
     <section className="login-container">
-      <h2 className="login-title">Entrar</h2>
       <form onSubmit={handleLogin} className="login-form">
+        <h2 className="login-title">sign in to access the mission</h2>
         <input
           type="email"
-          placeholder="Email"
+          placeholder="email address registered in the resistance"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           required
         />
         <input
           type="password"
-          placeholder="Senha"
+          placeholder="secret code"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           required
         />
         <button type="submit" className="login-button">
-          Entrar
+          infiltrate
         </button>
         {error && <p className="login-error">{error}</p>}
       </form>
