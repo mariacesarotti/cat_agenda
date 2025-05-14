@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:3000";
+const API_URL = "https://catagenda-production.up.railway.app";
 
 export const getToken = () => {
   const token = localStorage.getItem("token");
