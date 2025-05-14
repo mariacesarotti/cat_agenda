@@ -1,0 +1,24 @@
+:root {
+    --font-primary: 'Barlow Semi Condensed', sans-serif;
+    --font-secondary: 'VT323', monospace;
+    --font-tertiary: 'Carrois Gothic', sans-serif;
+    --font-quaternary: 'Bebas Neue', sans-serif;
+    --font-quinary: 'Lobster', cursive;
+    --font-display: 'Bungee Tint', cursive;
+  
+    --font-size-base: 16px;
+    --font-size-lg: 24px;
+    --font-size-xl: 32px;
+  
+    --color-bg: #ffffff;
+    --color-text: #121212;
+    --color-accent: #C91E03;
+    --color-muted: #666666;
+  }
+  
+  [data-theme="dark"] {
+    --color-bg: #121212;
+    --color-text: #f0f0f0;
+    --color-muted: #999999;
+  }
+  

@@ -1,0 +1,10 @@
+@mixin center-flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  @mixin responsive-text($min, $max) {
+    font-size: clamp($min, 2vw, $max);
+  }
+  
