@@ -4,6 +4,10 @@ import "./RegisterPage.scss";
 import { useScrollRefs } from "../../hooks/useScrollRefs";
 import FormSection from "../FormSection/FormSection";
 import CalendarSection from "../CalendarSection/CalendarSection";
+
+const API_URL = import.meta.env.VITE_API_URL;
+
+
 export const RegisterPage = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -17,7 +21,7 @@ export const RegisterPage = () => {
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const response = await fetch("http://localhost:3000/users", {
+      const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
