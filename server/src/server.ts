@@ -27,4 +27,5 @@ app.use("/vaccines", vaccineRoutes)
 
 app.listen(port, () => {
   console.log(`🚀 Server rodando em http://localhost:${port}`);
+  console.log(process.env);
 });

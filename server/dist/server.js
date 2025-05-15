@@ -27,4 +27,5 @@ app.use("/medications", medications_routes_1.default);
 app.use("/vaccines", vaccines_routes_1.default);
 app.listen(port, () => {
     console.log(`🚀 Server rodando em http://localhost:${port}`);
+    console.log(process.env);
 });
