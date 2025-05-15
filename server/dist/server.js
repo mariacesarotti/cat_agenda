@@ -1,0 +1,30 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const dotenv_1 = __importDefault(require("dotenv"));
+const express_1 = __importDefault(require("express"));
+const user_routes_1 = __importDefault(require("./routes/user.routes"));
+const cats_routes_1 = __importDefault(require("./routes/cats.routes"));
+const litter_routes_1 = __importDefault(require("./routes/litter.routes"));
+const foods_routes_1 = __importDefault(require("./routes/foods.routes"));
+const calendar_routes_1 = __importDefault(require("./routes/calendar.routes"));
+const medications_routes_1 = __importDefault(require("./routes/medications.routes"));
+const vaccines_routes_1 = __importDefault(require("./routes/vaccines.routes"));
+const cors_1 = __importDefault(require("cors"));
+dotenv_1.default.config();
+const app = (0, express_1.default)();
+const port = process.env.PORT || 3000;
+app.use((0, cors_1.default)());
+app.use(express_1.default.json());
+app.use(user_routes_1.default);
+app.use("/cats", cats_routes_1.default);
+app.use("/litter", litter_routes_1.default);
+app.use("/food", foods_routes_1.default);
+app.use("/calendar", calendar_routes_1.default);
+app.use("/medications", medications_routes_1.default);
+app.use("/vaccines", vaccines_routes_1.default);
+app.listen(port, () => {
+    console.log(`🚀 Server rodando em http://localhost:${port}`);
+});

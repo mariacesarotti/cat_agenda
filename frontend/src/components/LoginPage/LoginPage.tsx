@@ -3,6 +3,9 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.scss";
 
+
+const API_URL = import.meta.env.VITE_API_URL;
+
 export const LoginPage = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
@@ -13,7 +16,7 @@ export const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:3000/users/login", {
+      const response = await fetch(`${API_URL}/users`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
