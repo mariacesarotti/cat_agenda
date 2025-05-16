@@ -35,7 +35,7 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
-  const { email, password } = req.body;
+  const { name, email, password } = req.body;
 
   try {
     const JWT_SECRET = process.env.JWT_SECRET;
