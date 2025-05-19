@@ -53,7 +53,9 @@ const transformEvents = (events: Event[]): TransformedEvent[] => {
         title = `Trocar areia (${event.description.split("(")[1] || ""}`;
         break;
       case "litter_purchase":
-        title = `Comprar areia (${event.description.split(":")[1]?.trim() || ""})`;
+        title = `Comprar areia (${
+          event.description.split(":")[1]?.trim() || ""
+        })`;
         break;
       case "medication":
         title = `Hora do remédio – ${event.cat}`;
@@ -62,9 +64,11 @@ const transformEvents = (events: Event[]): TransformedEvent[] => {
         title = `Vacina agendada – ${event.cat}`;
         break;
       default:
-        title = `${capitalize(event.type)} - ${event.cat}: ${event.description}`;
+        title = `${capitalize(event.type)} - ${event.cat}: ${
+          event.description
+        }`;
     }
-
+    title.toLowerCase();
     return {
       title,
       start: new Date(event.date),
@@ -77,50 +81,71 @@ const transformEvents = (events: Event[]): TransformedEvent[] => {
   });
 };
 
-
 const generateGoogleCalendarLink = (event: any) => {
-  const startDate = new Date(event.start).toISOString().replace(/-|:|\.\d\d\d/g, "");
-  const endDate = new Date(event.end).toISOString().replace(/-|:|\.\d\d\d/g, "");
+  const startDate = new Date(event.start)
+    .toISOString()
+    .replace(/-|:|\.\d\d\d/g, "");
+  const endDate = new Date(event.end)
+    .toISOString()
+    .replace(/-|:|\.\d\d\d/g, "");
 
-  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate}/${endDate}&details=${encodeURIComponent(event.description)}`;
+  return `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(
+    event.title
+  )}&dates=${startDate}/${endDate}&details=${encodeURIComponent(
+    event.description
+  )}`;
 };
-
 
 // Função para lidar com o clique em um evento
 const handleSelectEvent = (event: any) => {
-if (window.confirm(`Detalhes do Evento:
+  if (
+    window.confirm(`Detalhes do Evento:
   Tipo: ${event.type}
   Gato: ${event.cat || "Não especificado"}
   Descrição: ${event.description}
   Data: ${event.start.toLocaleDateString()}
 
-  Deseja adicionar este evento ao Google Calendar?`)) {
-      window.open(generateGoogleCalendarLink(event), "_blank");
-    }
+  Deseja adicionar este evento ao Google Calendar?`)
+  ) {
+    window.open(generateGoogleCalendarLink(event), "_blank");
+  }
 };
 const eventStyleGetter = (event: TransformedEvent) => {
+  const safeTitle = event.title?.toLowerCase() || "";
   let backgroundColor = "";
 
-  if (event.type == "litter") backgroundColor = "#FFD700"; // Amarelo areia
-else if (event.type === "litter_purchase") backgroundColor = "#FFA500"; // cor diferente para compra
-else if (event.type === "food") backgroundColor = "#90EE90";
-else if (event.type === "food_purchase") backgroundColor = "#6B8E23"; // cor diferente para compra
-else if (event.type === "medication") backgroundColor = "#FF7F7F";
-else if (event.type === "vaccine") backgroundColor = "#87CEEB";
-else backgroundColor = "#D3D3D3";// Cinza padrão
+  // Definição das cores por tipo ou por conteúdo do título
+  if (event.type === "litter") {
+    backgroundColor = "#FFD700"; // Amarelo para troca de areia
+  } else if (event.type === "litter_purchase") {
+    backgroundColor = "#FFA500"; // Laranja para compra de areia
+  } else if (event.type === "food") {
+    backgroundColor = "#90EE90"; // Verde claro para alimentação
+  } else if (event.type === "food_purchase") {
+    backgroundColor = "#6B8E23"; // Verde escuro para compra de comida
+  } else if (event.type === "medication") {
+    backgroundColor = "#FF7F7F"; // Rosa para medicação
+  } else if (event.type === "vaccine") {
+    backgroundColor = "#87CEEB"; // Azul claro para vacina
+  } else if (safeTitle.includes("food")) {
+    backgroundColor = "#C0FFBA"; // fallback se "food" aparecer no título
+  } else {
+    backgroundColor = "#D3D3D3"; // Cinza para qualquer outro tipo
+  }
 
-  const style = {
-    backgroundColor,
-    borderRadius: "5px",
-    opacity: 0.8,
-    color: "black",
-    border: "0px",
-    display: "block",
-    padding: "2px",
+  return {
+    style: {
+      backgroundColor,
+      borderRadius: "5px",
+      opacity: 0.8,
+      color: "black",
+      border: "0px",
+      display: "block",
+      padding: "2px",
+    },
   };
-
-  return { style };
 };
+
 
 const CalendarSection: React.FC<CalendarSectionProps> = ({ events }) => {
   const calendarEvents = transformEvents(events);

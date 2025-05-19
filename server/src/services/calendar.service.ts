@@ -45,7 +45,7 @@ export const getUserCalendarEvents = async (user_id: number) => {
         date: item.start_date,
         type: "medication",
         cat: cat.name,
-        description: `Tomar ${item.med_name} (${item.dosage})`,
+        description: `Tomar ${item.med_name} (${item.dosage})` || " ",
       });
 
       // Caso queira adicionar a data final também:
@@ -53,7 +53,7 @@ export const getUserCalendarEvents = async (user_id: number) => {
         date: item.end_date,
         type: "medication",
         cat: cat.name,
-        description: `Fim da medicação (${item.med_name})`,
+        description: `Fim da medicação (${item.med_name})` || " ",
       });
     });
 
@@ -119,7 +119,7 @@ export const getUserCalendarEvents = async (user_id: number) => {
           date: formatDate(date) ?? date,
           type: "vaccine",
           cat: cat.name,
-          description: `Vacinação (${vaccineName})`,
+          description: `Vacinação (${vaccineName})` || " ",
         });
       });
     });
