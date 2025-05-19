@@ -35,12 +35,13 @@ export const createUser = async (req: Request, res: Response) => {
 };
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
-  const { name, email, password } = req.body;
+  const { email, password } = req.body;
+  const {name}  = req.params;
 
   try {
     const JWT_SECRET = process.env.JWT_SECRET;
     const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email,
+      email
     ]);
 
     const user = result.rows[0];

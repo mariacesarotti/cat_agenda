@@ -2,9 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./LoginPage.scss";
-
-
-const API_URL = import.meta.env.VITE_API_URL;
+import { loginUser } from "../../api/authApi"; // ajuste o caminho se necessário
 
 export const LoginPage = () => {
   const navigate = useNavigate();
@@ -16,21 +14,7 @@ export const LoginPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch(`${API_URL}/users`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error("Falha no login");
-      }
-
-      const data = await response.json();
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("userId", data.user.id.toString());
+      await loginUser(email, password); // já salva token e userId
       navigate("/admin");
     } catch (error: any) {
       console.error("Erro no login:", error);
