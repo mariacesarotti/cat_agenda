@@ -5,8 +5,7 @@ import { getUserCalendarEvents } from "../../services/calendar.service";
 export const getCalendarEventsByUser = async (req: Request, res: Response) => {
   const user_id = (req as any).user.id;
 
-  if (!user_id)
-    return res.status(400).json({ error: "Usuário não identificado." });
+  if (!user_id) res.status(400).json({ error: "Usuário não identificado." });
 
   try {
     const events = await getUserCalendarEvents(Number(user_id));
@@ -21,7 +20,7 @@ export const createCalendarEvent = async (req: Request, res: Response) => {
   const user_id = (req as any).user.id;
 
   if (!user_id)
-    return res.status(400).json({ error: "Usuário não identificado." });
+    res.status(400).json({ error: "Usuário não identificado." });
 
   try {
     const event = await pool.query(
