@@ -36,47 +36,35 @@ export const createUser = async (req: Request, res: Response) => {
 
 export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
-  const {name}  = req.params;
 
   try {
-    const JWT_SECRET = process.env.JWT_SECRET;
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
-      email
-    ]);
-
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     const user = result.rows[0];
 
     if (!user) {
-      res.status(401).json({ error: "Usuário não encontrado." });
-      return;
+     res.status(401).json({ error: "Usuário não encontrado." });
     }
+
     console.log("📦 Senha salva no banco:", user.password);
     console.log("🔐 Senha enviada pelo usuário:", password);
 
     const passwordMatch = await bcrypt.compare(password, user.password);
-
     if (!passwordMatch) {
       res.status(401).json({ error: "Senha incorreta." });
-      return;
     }
+
     const secret = process.env.JWT_SECRET as string;
     const token = jwt.sign(
       { id: user.id, name: user.name, email: user.email },
       secret,
-      {
-        expiresIn: "7d",
-      }
+      { expiresIn: "7d" }
     );
 
     res.status(200).json({
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        "esse é o meu id": user.id,
-        "esse é o meu nome": user.name,
-      },
+      userId: user.id,
+      name: user.name,
+      email: user.email,
     });
   } catch (error: any) {
     console.error("Erro ao fazer login:", error);

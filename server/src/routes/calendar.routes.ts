@@ -4,6 +4,6 @@ import { getCalendarEventsByUser } from "../controllers/calendar/calendar.contro
 
 const router = Router();
 
-router.get("/", authenticateToken, getCalendarEventsByUser);
+router.get("/:id", authenticateToken, getCalendarEventsByUser);
 
 export default router;

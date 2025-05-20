@@ -4,6 +4,7 @@ import "./RegisterPage.scss";
 import { useScrollRefs } from "../../hooks/useScrollRefs";
 import FormSection from "../FormSection/FormSection";
 import CalendarSection from "../CalendarSection/CalendarSection";
+import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -17,6 +18,7 @@ export const RegisterPage = () => {
   const { formRef, scrollTo, calendarRef } = useScrollRefs();
   const [calendarEvents, setCalendarEvents] = useState([]);
   const [checkingAuth, setCheckingAuth] = useState(true); // novo
+  const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,6 +43,7 @@ export const RegisterPage = () => {
 
       // Redirecionar para Home
       setCadastro(true);
+      navigate("/admin");
     } catch (error: any) {
       console.error("Erro ao cadastrar:", error);
       setError("Falha ao cadastrar. Verifique os dados.");

@@ -1,6 +1,6 @@
 const API_URL = import.meta.env.VITE_API_URL;
-
-
+const getUserId = () => localStorage.getItem("userId");
+import Event from "../components/CalendarSection/CalendarSection";
 export const getToken = () => {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -9,12 +9,16 @@ export const getToken = () => {
   return token;
 };
 
-export const createCat = async (name: string, age_category: string, userId: number) => {
+export const createCat = async (
+  name: string,
+  age_category: string,
+  userId: number
+) => {
   const response = await fetch(`${API_URL}/cats`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify({ name, age_category, user_id: userId }),
   });
@@ -32,7 +36,7 @@ export const getCats = async (userId: number) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -46,7 +50,7 @@ export const getLitterConfig = async (userId: number) => {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -54,13 +58,13 @@ export const getLitterConfig = async (userId: number) => {
     throw new Error("Erro ao buscar configuração de areia");
   }
   return response.json();
-}
+};
 export const getFoodConfig = async (userId: number) => {
   const response = await fetch(`${API_URL}/food/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -68,13 +72,13 @@ export const getFoodConfig = async (userId: number) => {
     throw new Error("Erro ao buscar configuração de comida");
   }
   return response.json();
-}
+};
 export const getVaccinationConfig = async (userId: number) => {
   const response = await fetch(`${API_URL}/vaccines/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -82,13 +86,13 @@ export const getVaccinationConfig = async (userId: number) => {
     throw new Error("Erro ao buscar configuração de vacinação");
   }
   return response.json();
-}
+};
 export const getMedicationConfig = async (userId: number) => {
   const response = await fetch(`${API_URL}/medications/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -96,13 +100,13 @@ export const getMedicationConfig = async (userId: number) => {
     throw new Error("Erro ao buscar configuração de medicação");
   }
   return response.json();
-}
+};
 export const createLitterConfig = async (data: unknown) => {
   const response = await fetch(`${API_URL}/litter`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
@@ -118,7 +122,7 @@ export const createFoodConfig = async (data: unknown) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
@@ -134,7 +138,7 @@ export const createVaccinationConfig = async (data: unknown) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
@@ -150,7 +154,7 @@ export const createMedicationConfig = async (data: unknown) => {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
     body: JSON.stringify(data),
   });
@@ -166,7 +170,7 @@ export const deleteCat = async (catId: number) => {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 
@@ -176,12 +180,17 @@ export const deleteCat = async (catId: number) => {
   return response.json();
 };
 
-export const getCalendarEvents = async () => {
-  const response = await fetch(`${API_URL}/calendar`, {
+
+export const getCalendarEvents = async (): Promise<Event[]> => {
+  const userId = getUserId();
+  if (!userId) {
+    throw new Error("User ID não encontrado no localStorage");
+  }
+  const response = await fetch(`${API_URL}/calendar/${userId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${getToken()}`,
+      Authorization: `Bearer ${getToken()}`,
     },
   });
 

@@ -5,6 +5,7 @@ import { LoginPage } from "./components/LoginPage/LoginPage";
 // import { PrivateRoute } from './components/PrivateRoute/PrivateRoute';
 import { RegisterPage } from "./components/RegisterPage/RegisterPage";
 import { AdminPage } from "./pages/AdminPage/AdminPage";
+import CalendarSection from "./components/CalendarSection/CalendarSection";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/admin" element={<AdminPage />} />
+        <Route path="/calendar" element={<CalendarSection events={[]} />} />
       </Routes>
     </BrowserRouter>
   );

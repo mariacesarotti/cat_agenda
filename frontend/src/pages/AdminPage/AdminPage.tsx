@@ -4,7 +4,7 @@ import { getCalendarEvents } from "../../api/catCalendarApi";
 import CalendarSection from "../../components/CalendarSection/CalendarSection";
 import { useNavigate } from "react-router-dom";
 import "./AdminPage.scss";
-interface Event {
+interface CalendarEvent {
   date: string;
   type: string;
   cat: string;
@@ -12,7 +12,7 @@ interface Event {
 }
 
 export const AdminPage = () => {
-  const [calendarEvents, setCalendarEvents] = useState<Event[]>([]);
+  const [calendarEvents, setCalendarEvents] = useState<CalendarEvent[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -26,8 +26,14 @@ export const AdminPage = () => {
   useEffect(() => {
     const fetchCalendarEvents = async () => {
       try {
-        const events = await getCalendarEvents();
-        setCalendarEvents(events);
+        const events: any[] = await getCalendarEvents(); // função customizada correta
+        const calendarEvents: CalendarEvent[] = events.map((event: any) => ({
+          date: event.date,
+          type: event.type,
+          cat: event.cat,
+          description: event.description,
+        }));
+        setCalendarEvents(calendarEvents);
       } catch (err: any) {
         console.error("Erro ao carregar eventos do calendário:", err);
         setError(err.message || "Erro desconhecido.");
@@ -39,15 +45,21 @@ export const AdminPage = () => {
     fetchCalendarEvents();
   }, []);
 
-  if (loading) return <p className="admin-status">the cats are calculating...</p>;
-  if (error) return <p className="admin-status">hmm. something went wrong: {error}</p>;
+  if (loading)
+    return <p className="admin-status">the cats are calculating...</p>;
+  if (error)
+    return <p className="admin-status">hmm. something went wrong: {error}</p>;
 
   return (
     <section className="admin-page-container">
       <nav className="admin-nav">
         <ul>
-          <li><a href="/">↩ home</a></li>
-          <li><button onClick={handleLogout}>log out</button></li>
+          <li>
+            <a href="/">↩ home</a>
+          </li>
+          <li>
+            <button onClick={handleLogout}>log out</button>
+          </li>
         </ul>
       </nav>
       <CalendarSection events={calendarEvents} />
