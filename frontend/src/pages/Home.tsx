@@ -18,7 +18,7 @@ export const Home: React.FC = () => {
   const [showRegister, setShowRegister] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
   const [calendarEvents, setCalendarEvents] = useState<Event[]>([]);
-  const [formCompleted, setFormCompleted] = useState(false); // <-- adiciona isso
+  const [formCompleted, setFormCompleted] = useState(false);
 
   const registerClick = () => {
     setShowRegister(true);
@@ -40,7 +40,9 @@ export const Home: React.FC = () => {
 
   const handleFormSubmit = (events: Event[]) => {
     setCalendarEvents(events);
-    setFormCompleted(true); // <-- quando submeter, muda para mostrar o calendário
+    setFormCompleted(true);
+    // Se quiser redirecionar para /admin só aqui, use:
+    // navigate("/admin");
   };
 
   return (
@@ -62,11 +64,12 @@ export const Home: React.FC = () => {
         </div>
       )}
 
-      {/* Aqui o segredo: se form não foi completado, mostra o form. Se foi, mostra calendário! */}
+      {/* Exibe o formulário apenas se não estiver em login, registro ou formulário já finalizado */}
       {!showLogin && !showRegister && !formCompleted && (
         <FormSection onSubmitForm={handleFormSubmit} />
       )}
 
+      {/* Exibe o calendário apenas após o formulário ser finalizado */}
       {!showLogin && !showRegister && formCompleted && (
         <CalendarSection events={calendarEvents} />
       )}

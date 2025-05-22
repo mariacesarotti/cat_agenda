@@ -4,10 +4,8 @@ import "./RegisterPage.scss";
 import { useScrollRefs } from "../../hooks/useScrollRefs";
 import FormSection from "../FormSection/FormSection";
 import CalendarSection from "../CalendarSection/CalendarSection";
-import { useNavigate } from "react-router-dom";
 
 const API_URL = import.meta.env.VITE_API_URL;
-
 
 export const RegisterPage = () => {
   const [name, setName] = useState("");
@@ -17,8 +15,7 @@ export const RegisterPage = () => {
   const [cadastro, setCadastro] = useState(false);
   const { formRef, scrollTo, calendarRef } = useScrollRefs();
   const [calendarEvents, setCalendarEvents] = useState([]);
-  const [checkingAuth, setCheckingAuth] = useState(true); // novo
-  const navigate = useNavigate();
+  const [checkingAuth, setCheckingAuth] = useState(true);
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -37,13 +34,15 @@ export const RegisterPage = () => {
 
       const data = await response.json();
 
-      // Salva token e userId (igual login depois)
+      // Salva token e userId
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user.id.toString());
 
-      // Redirecionar para Home
+      // Só mostra o formulário de gatos após cadastro bem-sucedido
       setCadastro(true);
-      navigate("/admin");
+      setTimeout(() => {
+        scrollTo(formRef);
+      }, 100);
     } catch (error: any) {
       console.error("Erro ao cadastrar:", error);
       setError("Falha ao cadastrar. Verifique os dados.");
@@ -51,16 +50,11 @@ export const RegisterPage = () => {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token && !cadastro) {
-      setCheckingAuth(false);
-    } else {
-      setCheckingAuth(false);
-    }
+     setCheckingAuth(false);
   }, [cadastro]);
 
   if (checkingAuth) {
-    return <div>Carregando...</div>; // ou um spinner bonitinho
+    return <div>Carregando...</div>;
   }
 
   const token = localStorage.getItem("token");
@@ -75,16 +69,9 @@ export const RegisterPage = () => {
     );
   }
 
-  const handleCadastroFinalizado = () => {
-    setCadastro(true);
-    setTimeout(() => {
-      scrollTo(formRef); // Depois dar o scroll (pequeno delay para dar tempo do form aparecer)
-    }, 100);
-  };
-
   const handleFormFinished = (events: any) => {
     setCalendarEvents(events);
-     setTimeout(() => {
+    setTimeout(() => {
       scrollTo(calendarRef);
     }, 100);
   };
@@ -118,7 +105,6 @@ export const RegisterPage = () => {
           <button
             type="submit"
             className="register-button"
-            onClick={handleCadastroFinalizado}
           >
             register
           </button>
