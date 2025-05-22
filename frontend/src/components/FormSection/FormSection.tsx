@@ -8,7 +8,6 @@ import {
 } from "../../api/catCalendarApi";
 
 import "./FormSection.scss";
-import { generateCalendarEvents } from "../../utils/generateCalendarEvents";
 
 interface CatInfo {
   name: string;
@@ -158,10 +157,11 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
           });
         }
       }
-      const calendarEvents = generateCalendarEvents(formData);
-      console.log("Eventos do calendário gerados no front:", calendarEvents);
 
-      onSubmitForm(calendarEvents);
+      // Buscar eventos do calendário do backend para garantir sincronização
+      const response = await fetch(`/calendar/${userId}`);
+      const events = await response.json();
+      onSubmitForm(events);
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error("Erro ao gerar calendário:", error.message);
@@ -207,10 +207,11 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
                   if (!isNaN(parsed) && parsed > 0) {
                     setNumberOfCats(parsed);
 
-                    const newCats = Array(parsed).fill({
+                    // Use Array.from to avoid reference issues
+                    const newCats = Array.from({ length: parsed }, () => ({
                       name: "",
                       age_category: "filhote",
-                    }) as CatInfo[];
+                    })) as CatInfo[];
                     setFormData((prev) => ({ ...prev, cats: newCats }));
                   }
                 }}
@@ -290,6 +291,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
             <div className="form-question--littertype-container">
               <label htmlFor="type_of_litter">litter of choice: </label>
               <select
+                value={formData.litterConfig?.type_of_litter || ""}
                 onChange={(e) =>
                   handleChange(e, "litterConfig", "type_of_litter")
                 }
@@ -313,6 +315,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="text"
                 placeholder="brands"
+                value={formData.foodConfig?.brand || ""}
                 onChange={(e) => handleChange(e, "foodConfig", "brand")}
                 required
               />
@@ -320,9 +323,11 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
             <div className="form-question--foodtype-container">
               <label htmlFor="type_of_food">preferred format of food: </label>
               <select
+                value={formData.foodConfig?.type_of_food || ""}
                 onChange={(e) => handleChange(e, "foodConfig", "type_of_food")}
                 required
               >
+                <option value=""></option>
                 <option value="seca">dry</option>
                 <option value="umida">wet</option>
                 <option value="seca+umida">dry + wet</option>
@@ -342,6 +347,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="text"
                 placeholder="med name"
+                value={formData.medicationConfig?.med_name || ""}
                 onChange={(e) =>
                   handleChange(e, "medicationConfig", "med_name")
                 }
@@ -353,6 +359,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="text"
                 placeholder="e.g. 5ml, 1 pill"
+                value={formData.medicationConfig?.dosage || ""}
                 onChange={(e) => handleChange(e, "medicationConfig", "dosage")}
               />
             </div>
@@ -362,6 +369,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="number"
                 placeholder="e.g. every 3 days"
+                value={formData.medicationConfig?.frequency_days || ""}
                 onChange={(e) =>
                   handleChange(e, "medicationConfig", "frequency_days")
                 }
@@ -380,6 +388,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="text"
                 placeholder="vaccine name"
+                value={formData.vaccinationConfig?.vaccine_name || ""}
                 onChange={(e) =>
                   handleChange(e, "vaccinationConfig", "vaccine_name")
                 }
@@ -393,6 +402,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="date"
                 placeholder="YYYY-MM-DD"
+                value={formData.vaccinationConfig?.date_administered || ""}
                 onChange={(e) =>
                   handleChange(e, "vaccinationConfig", "date_administered")
                 }
@@ -406,6 +416,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="number"
                 placeholder="usually once a year"
+                value={formData.vaccinationConfig?.frequency_days || ""}
                 onChange={(e) =>
                   handleChange(e, "vaccinationConfig", "frequency_days")
                 }
@@ -417,6 +428,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
               <input
                 type="text"
                 placeholder="optional notes"
+                value={formData.vaccinationConfig?.description || ""}
                 onChange={(e) =>
                   handleChange(e, "vaccinationConfig", "description")
                 }
@@ -466,7 +478,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
                 </p>
               )}
             </div>
-          </div>      
+          </div>
         )}
 
         {/* Botões */}
@@ -493,7 +505,6 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
             <button
               type="submit"
               className="form-submit-button"
-              onSubmit={handleSubmit}
             >
               launch operation
             </button>

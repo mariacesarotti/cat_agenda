@@ -45,6 +45,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     if (!user) {
       res.status(401).json({ error: "Usuário não encontrado." });
+      return;
     }
 
     console.log("📦 Senha salva no banco:", user.password);
@@ -53,6 +54,7 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
     const passwordMatch = await bcrypt.compare(password, user.password);
     if (!passwordMatch) {
       res.status(401).json({ error: "Senha incorreta." });
+      return;
     }
 
     const secret = process.env.JWT_SECRET as string;
@@ -85,6 +87,7 @@ export const getUsers = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 export const getUserById = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -92,6 +95,7 @@ export const getUserById = async (req: Request, res: Response) => {
     const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
     if (result.rows.length === 0) {
       res.status(404).json({ error: "usuário não encontrado!" });
+      return;
     }
     res.status(200).json(result.rows[0]);
   } catch (error: any) {
@@ -99,6 +103,7 @@ export const getUserById = async (req: Request, res: Response) => {
     res.status(500).json({ error: error.message });
   }
 };
+
 export const deleteUser = async (req: Request, res: Response) => {
   const { id } = req.params;
 
@@ -106,6 +111,7 @@ export const deleteUser = async (req: Request, res: Response) => {
     const result = await pool.query("DELETE FROM users WHERE id = $1", [id]);
     if (result.rowCount === 0) {
       res.status(404).json({ error: "usuário não encontrado!" });
+      return;
     }
     res.status(204).send();
   } catch (error: any) {
@@ -117,14 +123,23 @@ export const deleteUser = async (req: Request, res: Response) => {
 export const updateUser = async (req: Request, res: Response) => {
   const { id } = req.params;
   const { name, email, password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+
   try {
+    let hashedPassword: string | undefined = undefined;
+    if (password) {
+      hashedPassword = await bcrypt.hash(password, 10);
+    }
     const result = await pool.query(
-      "UPDATE users SET name = $1, email = $2, password = $3 WHERE id = $4 RETURNING *",
-      [name, email, hashedPassword, id]
+      "UPDATE users SET name = $1, email = $2" +
+        (hashedPassword ? ", password = $3" : "") +
+        " WHERE id = $4 RETURNING *",
+      hashedPassword
+        ? [name, email, hashedPassword, id]
+        : [name, email, id]
     );
     if (result.rows.length === 0) {
       res.status(404).json({ error: "usuário não encontrado!" });
+      return;
     }
     res.status(200).json(result.rows[0]);
   } catch (error: any) {

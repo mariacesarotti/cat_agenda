@@ -1,7 +1,7 @@
 interface VaccineCalculationInput {
   vaccine_name: string;
   cat_id: number;
-  date_administered: Date;
+  date_administered: Date | string;
   frequency_days: number;
 }
 
@@ -17,22 +17,30 @@ export const calculateVaccineNeeds = (
   vaccines: VaccineCalculationInput[],
   duration_default_days = 30 // fallback caso o usuário não forneça
 ): VaccineCalculationOutput[] => {
-  return vaccines.map((vac) => {
-    const dateAdministered = new Date(vac.date_administered);
-    const frequency = vac.frequency_days;
-    const catId = vac.cat_id;
-    const nextVaccineDate = new Date(dateAdministered);
-    nextVaccineDate.setDate(dateAdministered.getDate() + frequency);
+  return vaccines
+    .filter(
+      (vac) =>
+        vac.date_administered &&
+        !isNaN(new Date(vac.date_administered).getTime()) &&
+        vac.frequency_days
+    )
+    .map((vac) => {
+      const dateAdministered = new Date(vac.date_administered);
+      const frequency = vac.frequency_days;
+      const catId = vac.cat_id;
+      const nextVaccineDate = new Date(dateAdministered);
+      nextVaccineDate.setDate(dateAdministered.getDate() + frequency);
 
-    return {
-      vaccine_name: vac.vaccine_name,
-      cat_id: catId,
-      frequency: frequency,
-      date_administered: dateAdministered.toISOString().split("T")[0],
-      next_due_date: nextVaccineDate.toISOString().split("T")[0],
-    };
-  });
+      return {
+        vaccine_name: vac.vaccine_name,
+        cat_id: catId,
+        frequency: frequency,
+        date_administered: dateAdministered.toISOString().split("T")[0],
+        next_due_date: nextVaccineDate.toISOString().split("T")[0],
+      };
+    });
 };
+
 export const formatVaccineData = (vaccines: any[]) => {
   return vaccines.map((vaccine) => ({
     ...vaccine,

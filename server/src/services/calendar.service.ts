@@ -6,6 +6,7 @@ import { calculateMedicationNeeds } from "../services/medication.service";
 import { calculateLitterNeeds } from "../services/litter.service";
 
 export const getUserCalendarEvents = async (user_id: number) => {
+  try {
   const events: {
     date: string;
     type: string;
@@ -188,6 +189,10 @@ export const getUserCalendarEvents = async (user_id: number) => {
   return events
     .filter((e) => isValidDate(e.date)) // remove datas inválidas
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+} catch (error) {
+  console.error("Erro ao buscar eventos do calendário:", error);
+  throw new Error("Erro ao buscar eventos do calendário");  
+};
 };
 
 // Utilitário seguro para checar se é uma data válida
