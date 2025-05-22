@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import "./RegisterPage.scss";
 import { useScrollRefs } from "../../hooks/useScrollRefs";
 import FormSection from "../FormSection/FormSection";
-import CalendarSection from "../CalendarSection/CalendarSection";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -13,9 +13,9 @@ export const RegisterPage = () => {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [cadastro, setCadastro] = useState(false);
-  const { formRef, scrollTo, calendarRef } = useScrollRefs();
-  const [calendarEvents, setCalendarEvents] = useState([]);
+  const { formRef, scrollTo } = useScrollRefs();
   const [checkingAuth, setCheckingAuth] = useState(true);
+  const navigate = useNavigate();
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,15 +50,14 @@ export const RegisterPage = () => {
   };
 
   useEffect(() => {
-     setCheckingAuth(false);
+    setCheckingAuth(false);
   }, [cadastro]);
 
   if (checkingAuth) {
     return <div>Carregando...</div>;
   }
 
-  const token = localStorage.getItem("token");
-  if (token && !cadastro) {
+  if (localStorage.getItem("token") && !cadastro) {
     return (
       <section className="register-container">
         <h2 className="register-title">Você já está logado!</h2>
@@ -69,11 +68,9 @@ export const RegisterPage = () => {
     );
   }
 
-  const handleFormFinished = (events: any) => {
-    setCalendarEvents(events);
-    setTimeout(() => {
-      scrollTo(calendarRef);
-    }, 100);
+  // Quando o formulário de gatos termina, redireciona para /admin
+  const handleFormFinished = () => {
+    navigate("/admin");
   };
 
   return (
@@ -116,12 +113,6 @@ export const RegisterPage = () => {
         <div id="form-section" ref={formRef}>
           <FormSection onSubmitForm={handleFormFinished} />
         </div>
-      )}
-
-      {calendarEvents.length > 0 && (
-        <section id="calendar-section" ref={calendarRef} className="p-4">
-          <CalendarSection events={calendarEvents} />
-        </section>
       )}
     </>
   );
