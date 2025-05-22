@@ -29,14 +29,16 @@ export const getUserCalendarEvents = async (user_id: number) => {
       [catId]
     );
 
-    const medConfig = medsResult.rows.map((med) => ({
-      cat_id: catId,
-      med_name: med.med_name,
-      dosage: med.dosage,
-      start_date: new Date(med.start_date),
-      frequency_days: med.frequency_days,
-      duration_days: med.duration_days,
-    }));
+    const medConfig = medsResult.rows
+      .filter((med) => isValidDate(med.start_date))
+      .map((med) => ({
+        cat_id: catId,
+        med_name: med.med_name,
+        dosage: med.dosage,
+        start_date: new Date(med.start_date),
+        frequency_days: med.frequency_days,
+        duration_days: med.duration_days,
+      }));
 
     const medicationSchedule = calculateMedicationNeeds(medConfig);
 
@@ -65,48 +67,50 @@ export const getUserCalendarEvents = async (user_id: number) => {
       [catId]
     );
 
-    foods.rows.forEach((food) => {
-      const calc = calculateFoodNeeds({
-        age_category: cat.age_category,
-        type: food.type,
-        num_of_cats: 1,
+    foods.rows
+      .filter((food) => isValidDate(food.start_date))
+      .forEach((food) => {
+        const calc = calculateFoodNeeds({
+          age_category: cat.age_category,
+          type: food.type,
+          num_of_cats: 1,
+        });
+
+        const dates = generateRecurringDates(
+          food.start_date,
+          calc.frequencyOfBuying,
+          90
+        );
+
+        dates.forEach((date) => {
+          const formattedDate = formatDate(date);
+          const purchaseDate = new Date(date);
+          purchaseDate.setDate(purchaseDate.getDate() - 5);
+
+          let quantityDesc = "";
+          if (calc.foodBagsToBuy) quantityDesc += `${calc.foodBagsToBuy} saco(s) de 4kg `;
+          if (calc.foodCansToBuy) quantityDesc += `${calc.foodCansToBuy} lata(s) `;
+          if (calc.foodNaturalKg) quantityDesc += `${calc.foodNaturalKg}kg natural`;
+
+          if (isValidDate(date)) {
+            events.push({
+              date: formattedDate ?? "",
+              type: "food",
+              cat: cat.name,
+              description: `Reposição de ração (${food.brand})`,
+            });
+          }
+
+          if (isValidDate(purchaseDate)) {
+            events.push({
+              date: formatDate(purchaseDate) ?? "",
+              type: "food_purchase",
+              cat: "",
+              description: `Comprar comida para ${cat.name}: ${quantityDesc.trim()}`,
+            });
+          }
+        });
       });
-
-      const dates = generateRecurringDates(
-        food.start_date,
-        calc.frequencyOfBuying,
-        90
-      );
-
-      dates.forEach((date) => {
-        const formattedDate = formatDate(date);
-        const purchaseDate = new Date(date);
-        purchaseDate.setDate(purchaseDate.getDate() - 5);
-
-        let quantityDesc = "";
-        if (calc.foodBagsToBuy) quantityDesc += `${calc.foodBagsToBuy} saco(s) de 4kg `;
-        if (calc.foodCansToBuy) quantityDesc += `${calc.foodCansToBuy} lata(s) `;
-        if (calc.foodNaturalKg) quantityDesc += `${calc.foodNaturalKg}kg natural`;
-
-        if (isValidDate(date)) {
-          events.push({
-            date: formattedDate ?? "",
-            type: "food",
-            cat: cat.name,
-            description: `Reposição de ração (${food.brand})`,
-          });
-        }
-
-        if (isValidDate(purchaseDate)) {
-          events.push({
-            date: formatDate(purchaseDate) ?? "",
-            type: "food_purchase",
-            cat: "",
-            description: `Comprar comida para ${cat.name}: ${quantityDesc.trim()}`,
-          });
-        }
-      });
-    });
 
     // === Vaccines ===
     const vaccines = await pool.query(
@@ -114,21 +118,23 @@ export const getUserCalendarEvents = async (user_id: number) => {
       [catId]
     );
 
-    vaccines.rows.forEach((vaccine) => {
-      const dates = generateRecurringDates(vaccine.date_administered, 365, 365);
-      const vaccineName = vaccine.vaccine_name ?? "sem nome";
+    vaccines.rows
+      .filter((vaccine) => isValidDate(vaccine.date_administered))
+      .forEach((vaccine) => {
+        const dates = generateRecurringDates(vaccine.date_administered, 365, 365);
+        const vaccineName = vaccine.vaccine_name ?? "sem nome";
 
-      dates.forEach((date) => {
-        if (isValidDate(date)) {
-          events.push({
-            date: formatDate(date) ?? "",
-            type: "vaccine",
-            cat: cat.name,
-            description: `Vacinação (${vaccineName})`,
-          });
-        }
+        dates.forEach((date) => {
+          if (isValidDate(date)) {
+            events.push({
+              date: formatDate(date) ?? "",
+              type: "vaccine",
+              cat: cat.name,
+              description: `Vacinação (${vaccineName})`,
+            });
+          }
+        });
       });
-    });
   }
 
   // === Litter config ===
@@ -137,7 +143,10 @@ export const getUserCalendarEvents = async (user_id: number) => {
     [user_id]
   );
 
-  if (litterResult.rows.length > 0) {
+  if (
+    litterResult.rows.length > 0 &&
+    isValidDate(litterResult.rows[0].last_full_change)
+  ) {
     const litter = litterResult.rows[0];
     const litterCalc = calculateLitterNeeds({
       type_of_litter: litter.type_of_litter,
