@@ -1,6 +1,7 @@
 const API_URL = import.meta.env.VITE_API_URL;
 const getUserId = () => localStorage.getItem("userId");
-import Event from "../components/CalendarSection/CalendarSection";
+
+
 export const getToken = () => {
   const token = localStorage.getItem("token");
   if (!token) {

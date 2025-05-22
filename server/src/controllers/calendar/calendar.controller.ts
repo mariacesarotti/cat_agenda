@@ -2,17 +2,16 @@ import { Request, Response } from "express";
 import { pool } from "../../db/pool";
 import { getUserCalendarEvents } from "../../services/calendar.service";
 
-export const getCalendarEventsByUser = async (req: Request, res: Response) => {
-  const user_id = req.params;
-
-  if (!user_id) res.status(400).json({ error: "Usuário não identificado." });
-
+export const getCalendarEventsByUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
-    const events = await getUserCalendarEvents(Number(user_id));
-    res.status(200).json(events);
-  } catch (error: any) {
-    console.error("Error fetching calendar events:", error);
-    res.status(500).json({ error: error.message });
+    const userId = parseInt(req.params.id, 10);
+    const events = await getUserCalendarEvents(userId);
+    res.status(200).json(events); // ✅ sem "return"
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao buscar eventos" });
   }
 };
 export const createCalendarEvent = async (req: Request, res: Response) => {
