@@ -1,14 +1,21 @@
 const API_URL = import.meta.env.VITE_API_URL;
-const getUserId = () => localStorage.getItem("userId");
 
 
-export const getToken = () => {
+export const getToken = (): string => {
   const token = localStorage.getItem("token");
   if (!token) {
-    throw new Error("Token não encontrado no localStorage");
+    console.warn("Token não encontrado no localStorage");
+    throw new Error("Usuário não autenticado");
   }
   return token;
 };
+
+const getNumericUserId = () => {
+  const id = localStorage.getItem("userId");
+  if (!id) throw new Error("User ID não encontrado no localStorage");
+  return parseInt(id, 10);
+};
+
 
 export const createCat = async (
   name: string,
@@ -183,10 +190,9 @@ export const deleteCat = async (catId: number) => {
 
 
 export const getCalendarEvents = async (): Promise<Event[]> => {
-  const userId = getUserId();
-  if (!userId) {
-    throw new Error("User ID não encontrado no localStorage");
-  }
+ const userId = getNumericUserId();
+  if (!userId) throw new Error("User ID não encontrado no localStorage");
+
   const response = await fetch(`${API_URL}/calendar/${userId}`, {
     method: "GET",
     headers: {
@@ -198,9 +204,6 @@ export const getCalendarEvents = async (): Promise<Event[]> => {
   if (!response.ok) {
     throw new Error("Erro ao buscar eventos do calendário");
   }
-  console.log(response.headers.get("Authorization"));
-  console.log("Pegando token do localStorage:", getToken());
-  console.log("Pegando eventos do calendário");
-  console.log("Response:", response);
+
   return response.json();
 };
