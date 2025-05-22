@@ -9,6 +9,7 @@ import {
 
 import "./FormSection.scss";
 
+const API_URL = import.meta.env.VITE_API_URL;
 interface CatInfo {
   name: string;
   age_category: "filhote" | "adulto" | "senior";
@@ -159,7 +160,14 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
       }
 
       // Buscar eventos do calendário do backend para garantir sincronização
-      const response = await fetch(`/calendar/${userId}`);
+      const response = await fetch(`${API_URL}/calendar/${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      if (!response.ok) {
+        throw new Error("Erro ao buscar eventos do calendário");
+      }
       const events = await response.json();
       onSubmitForm(events);
     } catch (error: unknown) {
@@ -502,10 +510,7 @@ const FormSection: React.FC<FormSectionProps> = ({ onSubmitForm }) => {
             </button>
           )}
           {step === 6 && (
-            <button
-              type="submit"
-              className="form-submit-button"
-            >
+            <button type="submit" className="form-submit-button">
               launch operation
             </button>
           )}
