@@ -1,47 +1,5 @@
 {
   "rewrites": [
-    { "source": "/(.*)", "destination": "/" },
-    { "source": "/api/(.*)", "destination": "/api/$1" },
-    { "source": "/static/(.*)", "destination": "/static/$1" },
-    {"source": "/calendar/(.*)", "destination": "/calendar/$1"},
-    {"source": "/calendar", "destination": "/calendar"},
-    {"source": "/calendar/:path*", "destination": "/calendar/:path*"},
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"
-    },
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"},
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"
-    },
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"},
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"
-    },
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"},
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"
-    },
-    {"source": "/api/calendar/:path*", "destination": "/api/calendar/:path*"},
-    {"source": "/api/calendar", "destination": "/api/calendar"},
-    {"source": "/api/calendar/", "destination": "/api/calendar/"},
-    {"source": "/api/calendar/(.*)", "destination": "/api/calendar/$1"
-    }
+    { "source": "/calendar/:path*", "destination": "/calendar/:path*" }
   ]
 }
