@@ -30,7 +30,7 @@ const createUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 id: result.rows[0].id,
                 name: result.rows[0].name,
                 email: result.rows[0].email,
-            }
+            },
         });
     }
     catch (error) {
@@ -42,7 +42,9 @@ exports.createUser = createUser;
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
-        const result = yield pool_1.pool.query("SELECT * FROM users WHERE email = $1", [email]);
+        const result = yield pool_1.pool.query("SELECT * FROM users WHERE email = $1", [
+            email,
+        ]);
         const user = result.rows[0];
         if (!user) {
             res.status(401).json({ error: "Usuário não encontrado." });
@@ -57,9 +59,11 @@ const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name, email: user.email }, secret, { expiresIn: "7d" });
         res.status(200).json({
             token,
-            userId: user.id,
-            name: user.name,
-            email: user.email,
+            user: {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+            },
         });
     }
     catch (error) {

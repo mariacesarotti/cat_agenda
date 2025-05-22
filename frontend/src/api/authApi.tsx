@@ -17,7 +17,7 @@ export const loginUser = async (email: string, password: string) => {
 
   // ✅ Agora o user.id está dentro de data.user
   localStorage.setItem("token", data.token);
-  localStorage.setItem("userId", data.user.id.toString());
+  localStorage.setItem("userId", data.user.id);
 
   return data.user;
 };

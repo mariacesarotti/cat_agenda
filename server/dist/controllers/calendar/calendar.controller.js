@@ -13,16 +13,13 @@ exports.createCalendarEvent = exports.getCalendarEventsByUser = void 0;
 const pool_1 = require("../../db/pool");
 const calendar_service_1 = require("../../services/calendar.service");
 const getCalendarEventsByUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const user_id = req.params;
-    if (!user_id)
-        res.status(400).json({ error: "Usuário não identificado." });
     try {
-        const events = yield (0, calendar_service_1.getUserCalendarEvents)(Number(user_id));
-        res.status(200).json(events);
+        const userId = parseInt(req.params.id, 10);
+        const events = yield (0, calendar_service_1.getUserCalendarEvents)(userId);
+        res.status(200).json(events); // ✅ sem "return"
     }
     catch (error) {
-        console.error("Error fetching calendar events:", error);
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ error: "Erro ao buscar eventos" });
     }
 });
 exports.getCalendarEventsByUser = getCalendarEventsByUser;
