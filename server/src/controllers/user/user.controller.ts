@@ -23,10 +23,10 @@ export const createUser = async (req: Request, res: Response) => {
     res.status(201).json({
       token,
       user: {
-      id: result.rows[0].id,
-      name: result.rows[0].name,
-      email: result.rows[0].email,
-  }
+        id: result.rows[0].id,
+        name: result.rows[0].name,
+        email: result.rows[0].email,
+      },
     });
   } catch (error: any) {
     console.error("Erro ao criar usuário:", error);
@@ -38,11 +38,13 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
   const { email, password } = req.body;
 
   try {
-    const result = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
+    const result = await pool.query("SELECT * FROM users WHERE email = $1", [
+      email,
+    ]);
     const user = result.rows[0];
 
     if (!user) {
-     res.status(401).json({ error: "Usuário não encontrado." });
+      res.status(401).json({ error: "Usuário não encontrado." });
     }
 
     console.log("📦 Senha salva no banco:", user.password);
@@ -62,9 +64,11 @@ export const loginUser = async (req: Request, res: Response): Promise<void> => {
 
     res.status(200).json({
       token,
-      userId: user.id,
-      name: user.name,
-      email: user.email,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+      },
     });
   } catch (error: any) {
     console.error("Erro ao fazer login:", error);
