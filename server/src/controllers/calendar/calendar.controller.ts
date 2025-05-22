@@ -3,7 +3,7 @@ import { pool } from "../../db/pool";
 import { getUserCalendarEvents } from "../../services/calendar.service";
 
 export const getCalendarEventsByUser = async (req: Request, res: Response) => {
-  const user_id = (req as any).user.id;
+  const user_id = req.params;
 
   if (!user_id) res.status(400).json({ error: "Usuário não identificado." });
 

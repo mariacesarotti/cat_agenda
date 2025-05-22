@@ -42,35 +42,24 @@ exports.createUser = createUser;
 const loginUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, password } = req.body;
     try {
-        const JWT_SECRET = process.env.JWT_SECRET;
-        const result = yield pool_1.pool.query("SELECT * FROM users WHERE email = $1", [
-            email,
-        ]);
+        const result = yield pool_1.pool.query("SELECT * FROM users WHERE email = $1", [email]);
         const user = result.rows[0];
         if (!user) {
             res.status(401).json({ error: "Usuário não encontrado." });
-            return;
         }
         console.log("📦 Senha salva no banco:", user.password);
         console.log("🔐 Senha enviada pelo usuário:", password);
         const passwordMatch = yield bcryptjs_1.default.compare(password, user.password);
         if (!passwordMatch) {
             res.status(401).json({ error: "Senha incorreta." });
-            return;
         }
         const secret = process.env.JWT_SECRET;
-        const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name, email: user.email }, secret, {
-            expiresIn: "7d",
-        });
+        const token = jsonwebtoken_1.default.sign({ id: user.id, name: user.name, email: user.email }, secret, { expiresIn: "7d" });
         res.status(200).json({
             token,
-            user: {
-                id: user.id,
-                name: user.name,
-                email: user.email,
-                "esse é o meu id": user.id,
-                "esse é o meu nome": user.name,
-            },
+            userId: user.id,
+            name: user.name,
+            email: user.email,
         });
     }
     catch (error) {

@@ -164,7 +164,7 @@ const CalendarSection: React.FC<CalendarSectionProps> = ({ events }) => {
   return (
     <section className="calendar-container">
       <h2 className="calendar-title">Calendário de Cuidados</h2>
-      <div style={{ height: "80vh" }}>
+      <div className="calendar-section-content">
         <Calendar
           localizer={localizer}
           eventPropGetter={eventStyleGetter}

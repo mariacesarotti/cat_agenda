@@ -40,14 +40,14 @@ const getUserCalendarEvents = (user_id) => __awaiter(void 0, void 0, void 0, fun
                 date: item.start_date,
                 type: "medication",
                 cat: cat.name,
-                description: `Tomar ${item.med_name} (${item.dosage})`,
+                description: `Tomar ${item.med_name} (${item.dosage})` || " ",
             });
             // Caso queira adicionar a data final também:
             events.push({
                 date: item.end_date,
                 type: "medication",
                 cat: cat.name,
-                description: `Fim da medicação (${item.med_name})`,
+                description: `Fim da medicação (${item.med_name})` || " ",
             });
         });
         // === Foods ===
@@ -95,7 +95,7 @@ const getUserCalendarEvents = (user_id) => __awaiter(void 0, void 0, void 0, fun
                     date: (_b = (0, format_1.formatDate)(date)) !== null && _b !== void 0 ? _b : date,
                     type: "vaccine",
                     cat: cat.name,
-                    description: `Vacinação (${vaccineName})`,
+                    description: `Vacinação (${vaccineName})` || " ",
                 });
             });
         });
